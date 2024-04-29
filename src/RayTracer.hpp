@@ -3,6 +3,7 @@
 #include "ModelViewController.hpp"
 #include "SceneList.hpp"
 #include "UserSettings.hpp"
+#include "UserTelemetry.hpp"
 #include "Vulkan/RayTracing/Application.hpp"
 
 class RayTracer final : public Vulkan::RayTracing::Application
@@ -45,6 +46,7 @@ private:
 	uint32_t sceneIndex_{};
 	UserSettings userSettings_{};
 	UserSettings previousSettings_{};
+	UserTelemetry userTelemetry_{};
 	SceneList::CameraInitialSate cameraInitialSate_{};
 	ModelViewController modelViewController_{};
 

@@ -7,7 +7,6 @@
 #include "Vulkan/ImageView.hpp"
 #include "Vulkan/Sampler.hpp"
 #include "Utilities/Exception.hpp"
-#include "Vulkan/SingleTimeCommands.hpp"
 
 
 namespace Assets {
@@ -66,10 +65,14 @@ Scene::Scene(Vulkan::CommandPool& commandPool, std::vector<Model>&& models, std:
 	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "Materials", flags, materials, materialBuffer_, materialBufferMemory_);
 	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "Offsets", flags, offsets, offsetBuffer_, offsetBufferMemory_);
 
+	const std::vector<uint32_t> occupancy = {0, 0};
+	occupancyBuffer_.reset(new Vulkan::Buffer(commandPool.Device(), occupancy.size() * sizeof(uint32_t), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+	occupancyBUfferMemory_.reset(new Vulkan::DeviceMemory(occupancyBuffer_->AllocateMemory(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)));
+
 	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "AABBs", VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | flags, aabbs, aabbBuffer_, aabbBufferMemory_);
 	Vulkan::BufferUtil::CreateDeviceBuffer(commandPool, "Procedurals", flags, procedurals, proceduralBuffer_, proceduralBufferMemory_);
 
-	
+
 	// Upload all textures
 	textureImages_.reserve(textures_.size());
 	textureImageViewHandles_.resize(textures_.size());
@@ -100,6 +103,8 @@ Scene::~Scene()
 	indexBufferMemory_.reset(); // release memory after bound buffer has been destroyed
 	vertexBuffer_.reset();
 	vertexBufferMemory_.reset(); // release memory after bound buffer has been destroyed
+	occupancyBuffer_.reset();
+	occupancyBUfferMemory_.reset();
 }
 
 }

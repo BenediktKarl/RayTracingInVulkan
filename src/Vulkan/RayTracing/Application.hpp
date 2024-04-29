@@ -44,8 +44,11 @@ namespace Vulkan::RayTracing
 		void CreateOutputImage();
 
 		std::unique_ptr<class DeviceProcedures> deviceProcedures_;
+
+	protected:
 		std::unique_ptr<class RayTracingProperties> rayTracingProperties_;
 
+	private:
 		std::vector<class BottomLevelAccelerationStructure> bottomAs_;
 		std::unique_ptr<Buffer> bottomBuffer_;
 		std::unique_ptr<DeviceMemory> bottomBufferMemory_;

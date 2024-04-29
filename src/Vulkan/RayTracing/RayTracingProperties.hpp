@@ -26,12 +26,15 @@ namespace Vulkan
 			uint32_t ShaderGroupBaseAlignment() const { return pipelineProps_.shaderGroupBaseAlignment; }
 			uint32_t ShaderGroupHandleCaptureReplaySize() const { return pipelineProps_.shaderGroupHandleCaptureReplaySize; }
 			uint32_t ShaderGroupHandleSize() const { return pipelineProps_.shaderGroupHandleSize; }
+			uint32_t SubgroupSize() const { return subgroupProps_.subgroupSize; }
+			bool QuadOperationsInAlLStages() const { return subgroupProps_.quadOperationsInAllStages; }
 
 		private:
 
 			const class Device& device_;
 			VkPhysicalDeviceAccelerationStructurePropertiesKHR accelProps_{};
 			VkPhysicalDeviceRayTracingPipelinePropertiesKHR pipelineProps_{};
+			VkPhysicalDeviceSubgroupProperties subgroupProps_{};
 		};
 	}
 }

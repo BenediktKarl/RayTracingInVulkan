@@ -6,7 +6,11 @@ namespace Vulkan::RayTracing {
 RayTracingProperties::RayTracingProperties(const class Device& device) :
 	device_(device)
 {
+	subgroupProps_.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES;
+
 	accelProps_.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_PROPERTIES_KHR;
+	accelProps_.pNext = &subgroupProps_;
+
 	pipelineProps_.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
 	pipelineProps_.pNext = &accelProps_;
 

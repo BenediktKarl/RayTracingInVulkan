@@ -50,7 +50,10 @@ RayTracingPipeline::RayTracingPipeline(
 		{8, static_cast<uint32_t>(scene.TextureSamplers().size()), VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR},
 
 		// The Procedural buffer.
-		{9, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_INTERSECTION_BIT_KHR}
+		{9, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_INTERSECTION_BIT_KHR},
+
+		// Occupancy Buffer
+		{10, 1, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR}
 	};
 
 	descriptorSetManager_.reset(new DescriptorSetManager(device, descriptorBindings, uniformBuffers.size()));
@@ -102,6 +105,11 @@ RayTracingPipeline::RayTracingPipeline(
 		offsetsBufferInfo.buffer = scene.OffsetsBuffer().Handle();
 		offsetsBufferInfo.range = VK_WHOLE_SIZE;
 
+		// Occupancy buffer
+		VkDescriptorBufferInfo occupancyBufferInfo = {};
+		occupancyBufferInfo.buffer = scene.OccupancyBuffer().Handle();
+		occupancyBufferInfo.range = VK_WHOLE_SIZE;
+
 		// Image and texture samplers.
 		std::vector<VkDescriptorImageInfo> imageInfos(scene.TextureSamplers().size());
 
@@ -123,7 +131,8 @@ RayTracingPipeline::RayTracingPipeline(
 			descriptorSets.Bind(i, 5, indexBufferInfo),
 			descriptorSets.Bind(i, 6, materialBufferInfo),
 			descriptorSets.Bind(i, 7, offsetsBufferInfo),
-			descriptorSets.Bind(i, 8, *imageInfos.data(), static_cast<uint32_t>(imageInfos.size()))
+			descriptorSets.Bind(i, 8, *imageInfos.data(), static_cast<uint32_t>(imageInfos.size())),
+			descriptorSets.Bind(i, 10, occupancyBufferInfo)
 		};
 
 		// Procedural buffer (optional)

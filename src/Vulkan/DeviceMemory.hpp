@@ -20,8 +20,8 @@ namespace Vulkan
 
 		const class Device& Device() const { return device_; }
 
-		void* Map(size_t offset, size_t size);
-		void Unmap();
+		void* Map(size_t offset, size_t size) const;
+		void Unmap() const;
 
 	private:
 

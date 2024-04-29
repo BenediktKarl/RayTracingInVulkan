@@ -43,8 +43,7 @@ DeviceMemory::~DeviceMemory()
 	}
 }
 
-void* DeviceMemory::Map(const size_t offset, const size_t size)
-{
+void* DeviceMemory::Map(const size_t offset, const size_t size) const {
 	void* data;
 	Check(vkMapMemory(device_.Handle(), memory_, offset, size, 0, &data),
 		"map memory");
@@ -52,8 +51,7 @@ void* DeviceMemory::Map(const size_t offset, const size_t size)
 	return data;
 }
 
-void DeviceMemory::Unmap()
-{
+void DeviceMemory::Unmap() const {
 	vkUnmapMemory(device_.Handle(), memory_);
 }
 

@@ -20,6 +20,7 @@
 #include "Assets/UniformBuffer.hpp"
 #include "Utilities/Exception.hpp"
 #include <array>
+#include <iostream>
 
 namespace Vulkan {
 

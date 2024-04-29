@@ -31,11 +31,12 @@ namespace
 }
 
 UserInterface::UserInterface(
-	Vulkan::CommandPool& commandPool, 
-	const Vulkan::SwapChain& swapChain, 
+	Vulkan::CommandPool& commandPool,
+	const Vulkan::SwapChain& swapChain,
 	const Vulkan::DepthBuffer& depthBuffer,
-	UserSettings& userSettings) :
-	userSettings_(userSettings)
+	UserSettings& userSettings,
+	UserTelemetry& userTelemetry) :
+	userSettings_(userSettings), userTelemetry_(userTelemetry)
 {
 	const auto& device = swapChain.Device();
 	const auto& window = device.Surface().Instance().Window();
@@ -180,7 +181,7 @@ void UserInterface::DrawSettings()
 		ImGui::BulletText("F1: toggle Settings.");
 		ImGui::BulletText("F2: toggle Statistics.");
 		ImGui::BulletText(
-			"%c%c%c%c/SHIFT/CTRL: move camera.", 
+			"%c%c%c%c/SHIFT/CTRL: move camera.",
 			std::toupper(window.GetKeyName(GLFW_KEY_W, 0)[0]),
 			std::toupper(window.GetKeyName(GLFW_KEY_A, 0)[0]),
 			std::toupper(window.GetKeyName(GLFW_KEY_S, 0)[0]),
@@ -219,6 +220,12 @@ void UserInterface::DrawSettings()
 		ImGui::NewLine();
 	}
 	ImGui::End();
+
+	if (ImGui::Begin("Occupancy")) {
+		ImGui::Text("Subgroup Count    = %u", Telemetry().OccupancyNumSubGroups);
+		ImGui::Text("Active Lane Count = %u", Telemetry().OccupancyNumActiveLanes);
+	}
+	ImGui::End();
 }
 
 void UserInterface::DrawOverlay(const Statistics& statistics)
@@ -250,6 +257,11 @@ void UserInterface::DrawOverlay(const Statistics& statistics)
 		ImGui::Text("Frame rate: %.1f fps", statistics.FrameRate);
 		ImGui::Text("Primary ray rate: %.2f Gr/s", statistics.RayRate);
 		ImGui::Text("Accumulated samples:  %u", statistics.TotalSamples);
+		ImGui::NewLine();
+		ImGui::Text("#Subgroups: %u", statistics.OccupancyAmountSubgroups);
+		ImGui::Text("#Active Lanes: %u", statistics.OccupancyAmountActiveLanes);
+		ImGui::PlotLines("Occuapancy Percentage", statistics.OccupancyPercentage.data(),
+			statistics.OccupancyPercentage.size());
 	}
 	ImGui::End();
 }
